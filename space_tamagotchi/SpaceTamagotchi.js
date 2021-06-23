@@ -23,19 +23,19 @@ export default class Station {
     this.currency = currency;
     if (
       resultKey === "scienceModules" &&
-      this.currency >= 100 &&
+      this.currency >= 1 &&
       this.modules.science === false
     ) {
       this.modules.science = true;
-      this.currency -= 100;
+      this.currency -= 1;
     }
     if (
       resultKey === "module1" &&
-      this.currency >= 100 &&
+      this.currency >= 1 &&
       this.modules.moduleExtension === false
     ) {
       this.modules.moduleExtension = true;
-      this.currency -= 100;
+      this.currency -= 1;
     }
     if (
       resultKey === "shipyard" &&
