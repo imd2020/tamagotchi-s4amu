@@ -11,7 +11,8 @@ export default class Button {
     y,
     sizeX,
     sizeY,
-    roundness
+    roundness,
+    text
   ) {
     this.interactionColor = [r, g, b, a];
     this.displayedColor = [displayedR, displayedG, displayedB];
@@ -24,6 +25,7 @@ export default class Button {
       y: sizeY,
       roundness: roundness,
     };
+    this.text = text;
   }
   interactionArea() {
     push();
@@ -60,6 +62,10 @@ export default class Button {
       this.shape.y,
       this.shape.roundness
     );
+    fill(255, 255, 255);
+    textAlign(CENTER);
+    textSize(20);
+    text(this.text, this.pos.x, this.pos.y + 9);
     pop();
   }
 }

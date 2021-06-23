@@ -21,11 +21,14 @@ export default class ParameterEngine {
     this.workCounterSolarPanels = 0;
 
     this.working = false;
+
+    this.reverseCounter = 0;
   }
 
   timeDelay() {
     if (this.orderWater === true) {
       this.orderWaterCounter += 1 / this.inSeconds;
+      this.reverseCounter -= 1 / this.inSeconds;
     }
     if (this.orderWaterCounter >= 15) {
       this.water += 30;
@@ -36,6 +39,7 @@ export default class ParameterEngine {
 
     if (this.checkingElectrolyse === true) {
       this.workCounterElectrolyse += 1 / this.inSeconds;
+      this.reverseCounter -= 1 / this.inSeconds;
     }
     if (this.workCounterElectrolyse >= 10) {
       this.electrolyseMaintenance += 25;
@@ -46,6 +50,7 @@ export default class ParameterEngine {
 
     if (this.checkingSolarPanels === true) {
       this.workCounterSolarPanels += 1 / this.inSeconds;
+      this.reverseCounter -= 1 / this.inSeconds;
     }
     if (this.workCounterSolarPanels >= 10) {
       this.solarPanelMaintenence += 25;
@@ -55,7 +60,7 @@ export default class ParameterEngine {
     }
   }
 
-  parameterNet(state) {
+  parameterNet() {
     this.electrolyseMaintenance -= random(0.3, 0.5) / this.inSeconds;
     this.solarPanelMaintenence -= random(0.3, 0.5) / this.inSeconds;
     this.water -= random(0.3, 0.5) / this.inSeconds;
@@ -110,12 +115,15 @@ export default class ParameterEngine {
       this.checkingSolarPanels === false
     ) {
       if (resultKey === "solarPanels") {
+        this.reverseCounter = 10;
         this.checkingSolarPanels = true;
         this.working = true;
       } else if (resultKey === "electrolyse") {
+        this.reverseCounter = 10;
         this.checkingElectrolyse = true;
         this.working = true;
       } else if (resultKey === "orderWater") {
+        this.reverseCounter = 15;
         this.orderWater = true;
         this.working = true;
       }
@@ -142,6 +150,26 @@ export default class ParameterEngine {
     this.working = false;
   }
 
+  display() {
+    push();
+    fill(255, 255, 255);
+    textSize(20);
+    text("Electrolysis maintenance:", width / 2 - 330, height / 2 - 220);
+    text("Solarpanel maintenance:", width / 2 + 30, height / 2 + 200);
+    text("Water-tank:", width / 2 + 100, height / 2 - 120);
+    rect(width / 2 - 330, height / 2 - 210, this.electrolyseMaintenance, 5);
+    rect(width / 2 + 30, height / 2 + 210, this.solarPanelMaintenence, 5);
+    rect(width / 2 + 100, height / 2 - 110, this.water, 5);
+    textAlign(CENTER);
+    text("Time remaining to finish work:", width / 2, height / 2 - 350);
+    text("Score:", width / 2, height / 2 + 300);
+    text("Money:", width / 2, height / 2 + 350);
+    textSize(18),
+      text(round(this.reverseCounter) + "/sec", width / 2, height / 2 - 325);
+    text(round(this.score), width / 2, height / 2 + 325);
+    text(round(this.currency), width / 2, height / 2 + 375);
+    pop();
+  }
   testDisplay() {
     push();
     fill(255, 255, 255);

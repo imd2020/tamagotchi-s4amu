@@ -6,7 +6,6 @@ export default class Station {
     };
     this.format = 800;
     this.modules = {
-      main: true,
       science: false,
       shipyard: false,
       spacebus: false,
@@ -18,19 +17,37 @@ export default class Station {
 
   interactionShop(resultKey, currency) {
     this.currency = currency;
-    if (resultKey === "scienceModules" && this.currency >= 100) {
+    if (
+      resultKey === "scienceModules" &&
+      this.currency >= 100 &&
+      this.modules.science === false
+    ) {
       this.modules.science = true;
       this.currency -= 100;
     }
-    if (resultKey === "module1" && this.currency >= 100) {
+    if (
+      resultKey === "module1" &&
+      this.currency >= 100 &&
+      this.modules.moduleExtension === false
+    ) {
       this.modules.moduleExtension = true;
       this.currency -= 100;
     }
-    if (resultKey === "shipyard" && this.currency >= 200) {
+    if (
+      resultKey === "shipyard" &&
+      this.currency >= 100 &&
+      this.modules.shipyard === false
+    ) {
       this.modules.shipyard = true;
-      this.currency -= 200;
+      this.currency -= 100;
     }
     console.log(this.currency);
+  }
+
+  shop(assets, shopScreen) {
+    if (shopScreen === true) {
+      image(assets.visuals.shopscreen, width / 2, height / 2, 1000, 700);
+    }
   }
 
   moduleInteraction(stationAssets, shopScreen) {
@@ -80,56 +97,15 @@ export default class Station {
     }
   }
 
-  moduleSystem(stationAssets, shopScreen) {
+  mainModule(stationAssets) {
     imageMode(CENTER);
-    if (this.modules.science === true) {
-      image(
-        stationAssets.visuals.scienceModules,
-        this.pos.x,
-        this.pos.y,
-        this.format,
-        this.format
-      );
-    }
-    if (this.modules.main === true) {
-      image(
-        stationAssets.visuals.mainModule,
-        this.pos.x,
-        this.pos.y,
-        this.format,
-        this.format
-      );
-    }
-    if (this.modules.shipyard === true) {
-      image(
-        stationAssets.visuals.shipyard,
-        this.pos.x,
-        this.pos.y,
-        this.format,
-        this.format
-      );
-    }
-    if (this.modules.moduleExtension === true) {
-      image(
-        stationAssets.visuals.moduleExtension1,
-        this.pos.x,
-        this.pos.y,
-        this.format,
-        this.format
-      );
-    }
-    if (this.modules.spacebus === true) {
-      image(
-        stationAssets.visuals.spaceBus,
-        this.pos.x,
-        this.pos.y,
-        this.format,
-        this.format
-      );
-    }
-    if (shopScreen === true) {
-      image(stationAssets.visuals.shopscreen, width / 2, height / 2, 1000, 700);
-    }
+    image(
+      stationAssets.visuals.mainModule,
+      this.pos.x,
+      this.pos.y,
+      this.format,
+      this.format
+    );
   }
 
   restart() {

@@ -1,7 +1,11 @@
 import ParameterEngine from "./ParameterNetwork.js";
 import Station from "./SpaceTamagotchi.js";
 import Button from "./button.js";
-import Background from "./screenVisuals.js";
+import Background from "./background.js";
+import { ScienceModule } from "./scienceModuels.js";
+import { Shipyard } from "./shipyard.js";
+import { Module1 } from "./module1.js";
+import { SpaceBus } from "./spacebus.js";
 
 window.preload = preload;
 window.draw = draw;
@@ -20,6 +24,7 @@ let assets = {
     spaceBus: "",
     shopscreen: "",
     howtoScreen: "",
+    freighter: "",
   },
   interactionArea: {
     shop: "",
@@ -28,12 +33,14 @@ let assets = {
     orderWater: "",
     shopscreen: "",
     shopscreenClose: "",
+    shipyard: "",
   },
 };
 let clickedColor;
 let colorDict = new Map();
 let shopScreen = false;
 let backClick = false;
+
 let startButton = new Button(
   122,
   201,
@@ -46,7 +53,8 @@ let startButton = new Button(
   height / 2,
   200,
   100,
-  20
+  20,
+  "Start"
 );
 let howtoButton = new Button(
   122,
@@ -60,7 +68,8 @@ let howtoButton = new Button(
   height / 2 + 100,
   150,
   50,
-  10
+  10,
+  "Controls"
 );
 let restart = new Button(
   210,
@@ -74,9 +83,14 @@ let restart = new Button(
   height / 2,
   200,
   100,
-  20
+  20,
+  "Restart"
 );
-let starBackground = new Background();
+let gameBackground = new Background();
+let module1;
+let shipyard;
+let scienceModule;
+let spaceBus;
 
 colorDict.set("shop", [100, 200, 30, 255]);
 colorDict.set("solarPanels", [110, 200, 190, 255]);
@@ -86,9 +100,10 @@ colorDict.set("shopScreenClose", [130, 230, 255, 255]);
 colorDict.set("module1", [130, 130, 230, 255]);
 colorDict.set("scienceModules", [130, 230, 230, 255]);
 colorDict.set("shipyard", [130, 30, 230, 255]);
-colorDict.set("testStartButton", [30, 30, 243, 255]);
-colorDict.set("testRestartButton", [30, 30, 244, 255]);
-colorDict.set("testHowtoButton", [30, 40, 212, 255]);
+colorDict.set("startButton", [30, 30, 243, 255]);
+colorDict.set("restartButton", [30, 30, 244, 255]);
+colorDict.set("howtoButton", [30, 40, 212, 255]);
+colorDict.set("spaceBus", [255, 0, 255, 255]);
 
 function preload() {
   assets.visuals.howtoScreen = loadImage("assets/howtoScreen.png");
@@ -98,6 +113,8 @@ function preload() {
   assets.visuals.shipyard = loadImage("assets/shipyard.png");
   assets.visuals.spaceBus = loadImage("assets/spaceBus.png");
   assets.visuals.shopscreen = loadImage("assets/shopscreen.png");
+  assets.visuals.freighter = loadImage("assets/freighter.png");
+
   assets.interactionArea.shop = loadImage("assets/interactionShop.png"); //(100,200,30)
   assets.interactionArea.solarPanels = loadImage(
     "assets/interactionSolarpanels.png" //(110,200,190)
@@ -114,11 +131,13 @@ function preload() {
   assets.interactionArea.shopscreenClose = loadImage(
     "assets/interactionShopscreenClose.png"
   ); //(130,230,255)
+  assets.interactionArea.shipyard = loadImage("assets/interactionShipyard.png"); //(255,0,255);
 }
 
 function startScreen() {
   if (state === "startScreen") {
-    starBackground.displayBackground();
+    gameBackground.displayBackground();
+    gameBackground.freighter(assets);
     startButton.interactionArea();
     howtoButton.interactionArea();
     clickedColor = get(mouseX, mouseY);
@@ -129,7 +148,7 @@ function startScreen() {
 
 function howtoScreen() {
   if (state === "howtoScreen") {
-    starBackground.displayBackground();
+    gameBackground.displayBackground();
     imageMode(CENTER);
     image(assets.visuals.howtoScreen, width / 2, height / 2, 700, 500);
   }
@@ -141,14 +160,38 @@ function howtoScreen() {
 
 function gameScreen() {
   if (state === "gameScreen") {
-    starBackground.displayBackground();
+    gameBackground.displayBackground();
+    gameBackground.freighter(assets);
     station.moduleInteraction(assets, shopScreen);
+    if (station.modules.shipyard === true) {
+      shipyard = new Shipyard();
+      shipyard.interactionArea(assets);
+    }
     clickedColor = get(mouseX, mouseY);
-    station.moduleSystem(assets, shopScreen);
+    if (station.modules.science === true) {
+      scienceModule = new ScienceModule();
+      scienceModule.display(assets);
+    }
+    station.mainModule(assets);
+    if (station.modules.shipyard === true) {
+      shipyard.display(assets);
+    }
+    if (station.modules.moduleExtension === true) {
+      module1 = new Module1();
+      module1.display(assets);
+    }
+    if (station.modules.spacebus === true) {
+      spaceBus = new SpaceBus();
+      spaceBus.display(assets);
+    }
     parameterEngine.parameterNet(state);
     parameterEngine.timeDelay();
     parameterEngine.gameScore();
+    parameterEngine.display();
+    station.shop(assets, shopScreen);
+
     parameterEngine.testDisplay();
+
     if (parameterEngine.lose() === true) {
       state = "scoreScreen";
     }
@@ -157,7 +200,7 @@ function gameScreen() {
 
 function scoreScreen() {
   if (state === "scoreScreen") {
-    starBackground.displayBackground();
+    gameBackground.displayBackground();
     restart.interactionArea();
     clickedColor = get(mouseX, mouseY);
     restart.display();
@@ -199,18 +242,21 @@ function mouseClicked() {
     backClick = true;
   }
 
-  if (resultKey === "testStartButton") {
+  if (resultKey === "startButton") {
     state = "gameScreen";
-  } else if (resultKey === "testHowtoButton") {
+  } else if (resultKey === "howtoButton") {
     state = "howtoScreen";
   }
 
-  if (resultKey === "testRestartButton") {
+  if (resultKey === "restartButton") {
     station.restart();
     parameterEngine.restart();
     state = "startScreen";
   }
 
+  if (station.modules.shipyard === true) {
+    shipyard.spacebus(resultKey);
+  }
   station.interactionShop(resultKey, parameterEngine.currency);
   parameterEngine.currencyCheck(station.currency);
   parameterEngine.interactionNet(resultKey, shopScreen);
