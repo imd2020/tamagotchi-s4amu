@@ -3,9 +3,8 @@ import Station from "./SpaceTamagotchi.js";
 export class ScienceModule extends Station {
   constructor() {
     super();
+    this.efficiencyFactor = 2;
   }
-
-  perk() {}
 
   display(assets) {
     image(

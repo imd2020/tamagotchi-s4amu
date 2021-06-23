@@ -13,6 +13,10 @@ export default class Station {
       shopScreen: false,
     };
     this.currency = 0;
+    this.offset = {
+      x: 0,
+      y: 0,
+    };
   }
 
   interactionShop(resultKey, currency) {
@@ -35,13 +39,12 @@ export default class Station {
     }
     if (
       resultKey === "shipyard" &&
-      this.currency >= 100 &&
+      this.currency >= 1 &&
       this.modules.shipyard === false
     ) {
       this.modules.shipyard = true;
-      this.currency -= 100;
+      this.currency -= 1;
     }
-    console.log(this.currency);
   }
 
   shop(assets, shopScreen) {
@@ -97,15 +100,22 @@ export default class Station {
     }
   }
 
-  mainModule(stationAssets) {
+  mainModule(assets) {
     imageMode(CENTER);
     image(
-      stationAssets.visuals.mainModule,
+      assets.visuals.mainModule,
       this.pos.x,
       this.pos.y,
       this.format,
       this.format
     );
+  }
+
+  parallax() {
+    this.offset.x = mouseX - width / 2;
+    this.offset.y = mouseY - height / 2;
+    this.pos.x = width / 2 - this.offset.x / 70;
+    this.pos.y = height / 2 - this.offset.y / 70;
   }
 
   restart() {

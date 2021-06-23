@@ -162,6 +162,7 @@ function gameScreen() {
   if (state === "gameScreen") {
     gameBackground.displayBackground();
     gameBackground.freighter(assets);
+    station.parallax();
     station.moduleInteraction(assets, shopScreen);
     if (station.modules.shipyard === true) {
       shipyard = new Shipyard();
@@ -170,6 +171,7 @@ function gameScreen() {
     clickedColor = get(mouseX, mouseY);
     if (station.modules.science === true) {
       scienceModule = new ScienceModule();
+      parameterEngine.efficiencyFactor = scienceModule.efficiencyFactor;
       scienceModule.display(assets);
     }
     station.mainModule(assets);
@@ -255,12 +257,17 @@ function mouseClicked() {
   }
 
   if (station.modules.shipyard === true) {
-    shipyard.spacebus(resultKey);
+    console.log("iasgdiausgdh");
+    shipyard.busControl(resultKey);
   }
+
   station.interactionShop(resultKey, parameterEngine.currency);
   parameterEngine.currencyCheck(station.currency);
   parameterEngine.interactionNet(resultKey, shopScreen);
+
   console.log(state);
-  console.log(shopScreen);
+  console.log(parameterEngine.efficiencyFactor + "efficiencyFactor ");
+  console.log(station.modules.shipyard + " shipyard");
+  console.log(station.modules.spacebus + " spacebus");
   console.log(resultKey);
 }

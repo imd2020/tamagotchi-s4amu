@@ -5,11 +5,11 @@ export class Shipyard extends Station {
     super();
   }
 
-  spacebus(resultKey) {
-    if (resultKey === "spaceBus" && this.modules.spacebus === true) {
+  busControl(resultKey) {
+    console.log("iasgdiausgdh");
+    if (resultKey === "spaceBus" && this.modules.spacebus === false) {
       this.modules.spacebus = true;
-      console.log("iasgdiausgdh");
-    } else if (resultKey === "spaceBus" && this.modules.spacebus === false) {
+    } else if (resultKey === "spaceBus" && this.modules.spacebus === true) {
       this.modules.spacebus = false;
     }
   }

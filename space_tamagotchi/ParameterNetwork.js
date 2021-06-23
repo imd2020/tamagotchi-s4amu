@@ -23,6 +23,8 @@ export default class ParameterEngine {
     this.working = false;
 
     this.reverseCounter = 0;
+
+    this.efficiencyFactor = 1;
   }
 
   timeDelay() {
@@ -61,14 +63,18 @@ export default class ParameterEngine {
   }
 
   parameterNet() {
-    this.electrolyseMaintenance -= random(0.3, 0.5) / this.inSeconds;
-    this.solarPanelMaintenence -= random(0.3, 0.5) / this.inSeconds;
-    this.water -= random(0.3, 0.5) / this.inSeconds;
+    this.electrolyseMaintenance -=
+      random(0.3, 0.5) / this.inSeconds / this.efficiencyFactor;
 
-    if (this.solarPanelMaintenence <= 30) {
+    this.solarPanelMaintenence -=
+      random(0.3, 0.5) / this.inSeconds / this.efficiencyFactor;
+
+    this.water -= random(0.3, 0.5) / this.inSeconds / this.efficiencyFactor;
+
+    if (this.solarPanelMaintenence <= random(30, 40)) {
       this.electrolyseMaintenance -= 1 / this.inSeconds;
     }
-    if (this.water <= 40) {
+    if (this.water <= random(30, 40)) {
       this.electrolyseMaintenance -= 1 / this.inSeconds;
     }
 
