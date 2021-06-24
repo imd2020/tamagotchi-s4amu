@@ -5,17 +5,12 @@ export default class Station {
       y: height / 2,
     };
     this.format = 800;
-    this.modules = {
-      science: false,
-      shipyard: false,
-      spacebus: false,
-      moduleExtension: false,
-    };
     this.currency = 0;
     this.offset = {
       x: 0,
       y: 0,
     };
+    this.active = false;
   }
 
   moduleInteraction(stationAssets) {

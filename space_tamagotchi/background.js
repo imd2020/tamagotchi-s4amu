@@ -17,14 +17,15 @@ export default class Background {
 
   animation() {
     const ship = this;
-    this.x = 0;
+    this.sizeFactor = random(0.8, 1.7);
+    this.freighterPos.x = -200;
+    this.freighterPos.y = height / 2 + random(-200, 200);
     gsap.to(this.freighterPos, {
       x: width + 200,
       y: height / 2 + random(-200, 200),
-      duration: random(10, 20),
+      duration: random(20, 30),
       ease: "linear",
-      // repeat: -1,
-      // repeatDelay: 5,
+      delay: random(30, 60),
       onComplete: () => {
         ship.animation();
       },
@@ -44,26 +45,6 @@ export default class Background {
       100 * this.sizeFactor
     );
     pop();
-    // this.counter += 1 / 30;
-    // if (this.counter >= random(60, 120)) {
-    //   this.enableFreighter = true;
-    //   this.freighterPos.y += random(-300, 300);
-    //   this.sizeFactor = random(1, 2);
-    //   this.counter = 0;
-    // }
-    // if (this.enableFreighter === true) {
-    //   image(
-    //     assets.visuals.freighter,
-    //     this.freighterPos.x,
-    //     this.freighterPos.y,
-    //     130 * this.sizeFactor,
-    //     100 * this.sizeFactor
-    //   );
-    // }
-    // if (this.freighterPos.x >= width + 200) {
-    //   this.enableFreighter = 0;
-    //   this.freighterPos.x = -200;
-    // }
   }
 
   displayBackground() {

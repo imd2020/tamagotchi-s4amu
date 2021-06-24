@@ -185,10 +185,10 @@ export default class ParameterEngine {
     textSize(20);
     text("Electrolysis maintenance:", width / 2 - 330, height / 2 - 220);
     text("Solarpanel maintenance:", width / 2 + 30, height / 2 + 200);
-    text("Water-tank:", width / 2 + 100, height / 2 - 120);
+    text("Water-tank:", width / 2 + 180, height / 2 - 120);
     rect(width / 2 - 330, height / 2 - 210, this.electrolyseMaintenance, 5);
     rect(width / 2 + 30, height / 2 + 210, this.solarPanelMaintenence, 5);
-    rect(width / 2 + 100, height / 2 - 110, this.water, 5);
+    rect(width / 2 + 180, height / 2 - 110, this.water, 5);
     textAlign(CENTER);
     text("Time remaining to finish work:", width / 2, height / 2 - 350);
     text("Score:", width / 2, height / 2 + 300);
@@ -197,30 +197,6 @@ export default class ParameterEngine {
       text(round(this.reverseCounter) + "/sec", width / 2, height / 2 - 325);
     text(round(this.score), width / 2, height / 2 + 325);
     text(round(this.currency), width / 2, height / 2 + 375);
-    pop();
-  }
-  testDisplay() {
-    push();
-    fill(255, 255, 255);
-    text("O2: " + round(this.electrolyseMaintenance), 20, 100);
-    text("Electricity: " + round(this.solarPanelMaintenence), 20, 120);
-    text("Water: " + round(this.water), 20, 140);
-    text("Score: " + round(this.score), 20, 160);
-    text("Money: " + round(this.currency), 20, 180);
-    text("OrderWater: " + round(this.orderWaterCounter), 20, 200);
-    text(
-      "Working on Solarpanels: " + round(this.workCounterSolarPanels),
-      20,
-      220
-    );
-    text(
-      "Working on Electrolyse: " + round(this.workCounterElectrolyse),
-      20,
-      240
-    );
-    if (this.working === true) {
-      text("Working...", 20, 260);
-    }
     pop();
   }
 }

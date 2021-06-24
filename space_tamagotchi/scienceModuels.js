@@ -3,7 +3,12 @@ import Station from "./SpaceTamagotchi.js";
 export class ScienceModule extends Station {
   constructor() {
     super();
-    this.efficiencyFactor = 2;
+    this.efficiencyFactor = 1;
+  }
+
+  reset() {
+    this.active = false;
+    this.efficiencyFactor = 1;
   }
 
   parallax() {
@@ -14,13 +19,16 @@ export class ScienceModule extends Station {
   }
 
   display(assets) {
-    this.parallax();
-    image(
-      assets.visuals.scienceModules,
-      this.pos.x,
-      this.pos.y,
-      this.format,
-      this.format
-    );
+    if (this.active === true) {
+      this.efficiencyFactor = 2;
+      this.parallax();
+      image(
+        assets.visuals.scienceModules,
+        this.pos.x,
+        this.pos.y,
+        this.format,
+        this.format
+      );
+    }
   }
 }

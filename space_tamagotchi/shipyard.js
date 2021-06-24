@@ -3,16 +3,20 @@ import Station from "./SpaceTamagotchi.js";
 export class Shipyard extends Station {
   constructor() {
     super();
+    this.enableSpaceBus = false;
   }
 
-  busControl(resultKey) {
-    console.log("iasgdiausgdh");
-    if (resultKey === "spaceBus") {
-      this.modules.spacebus = true;
+  reset() {
+    this.enableSpaceBus = false;
+    this.active = false;
+  }
+
+  spaceBsusControl(resultKey) {
+    if (resultKey === "spaceBus" && this.enableSpaceBus === false) {
+      this.enableSpaceBus = true;
+    } else if (resultKey === "spaceBus" && this.enableSpaceBus === true) {
+      this.enableSpaceBus = false;
     }
-    // else if (resultKey === "spaceBus" && this.modules.spacebus === true) {
-    //   this.modules.spacebus = false;
-    // }
   }
 
   parallax() {
@@ -23,24 +27,28 @@ export class Shipyard extends Station {
   }
 
   interactionArea(assets) {
-    this.parallax();
-    image(
-      assets.interactionArea.shipyard,
-      this.pos.x,
-      this.pos.y,
-      this.format,
-      this.format
-    );
+    if (this.active === true) {
+      this.parallax();
+      image(
+        assets.interactionArea.shipyard,
+        this.pos.x,
+        this.pos.y,
+        this.format,
+        this.format
+      );
+    }
   }
 
   display(assets) {
-    this.parallax();
-    image(
-      assets.visuals.shipyard,
-      this.pos.x,
-      this.pos.y,
-      this.format,
-      this.format
-    );
+    if (this.active === true) {
+      this.parallax();
+      image(
+        assets.visuals.shipyard,
+        this.pos.x,
+        this.pos.y,
+        this.format,
+        this.format
+      );
+    }
   }
 }

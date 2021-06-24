@@ -14,22 +14,33 @@ export class Module1 extends Station {
   }
 
   perk() {
-    if (this.setup === false) {
-      this.solarPanelMaintenence += 50;
-      this.electrolyseMaintenance += 50;
-      this.water += 50;
+    if (this.setup === false && this.active === true) {
+      this.solarPanelMaintenence = 20;
+      this.electrolyseMaintenance = 20;
+      this.water = 20;
       this.setup = true;
+    } else {
+      this.solarPanelMaintenence = 0;
+      this.electrolyseMaintenance = 0;
+      this.water = 0;
     }
   }
 
+  reset() {
+    this.active = false;
+    this.setup = false;
+  }
+
   display(assets) {
-    this.parallax();
-    image(
-      assets.visuals.moduleExtension1,
-      this.pos.x,
-      this.pos.y,
-      this.format,
-      this.format
-    );
+    if (this.active === true) {
+      this.parallax();
+      image(
+        assets.visuals.moduleExtension1,
+        this.pos.x,
+        this.pos.y,
+        this.format,
+        this.format
+      );
+    }
   }
 }

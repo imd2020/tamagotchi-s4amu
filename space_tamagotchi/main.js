@@ -14,8 +14,6 @@ window.draw = draw;
 window.setup = setup;
 window.mouseClicked = mouseClicked;
 
-let parameterEngine = new ParameterEngine();
-let station = new Station();
 let state = "startScreen";
 let assets = {
   visuals: {
@@ -90,11 +88,13 @@ let restart = new Button(
   "Restart"
 );
 let gameBackground = new Background();
-let module1;
-let shipyard;
-let scienceModule;
-let spaceBus;
+let module1 = new Module1();
+let shipyard = new Shipyard();
+let scienceModule = new ScienceModule();
+let spaceBus = new SpaceBus();
 let shop = new Shop();
+let parameterEngine = new ParameterEngine();
+let station = new Station();
 
 colorDict.set("shop", [100, 200, 30, 255]);
 colorDict.set("solarPanels", [110, 200, 190, 255]);
@@ -160,42 +160,6 @@ function howtoScreen() {
   }
 }
 
-function ifModule1() {
-  if (station.modules.moduleExtension === true) {
-    module1 = new Module1();
-    module1.perk();
-    module1.display(assets);
-  }
-}
-
-function ifShipyardInteraction() {
-  if (station.modules.shipyard === true) {
-    shipyard = new Shipyard();
-    shipyard.interactionArea(assets);
-  }
-}
-
-function ifShipyard() {
-  if (station.modules.shipyard === true) {
-    shipyard.display(assets);
-  }
-}
-
-function ifScience() {
-  if (station.modules.science === true) {
-    scienceModule = new ScienceModule();
-    parameterEngine.efficiencyFactor = scienceModule.efficiencyFactor;
-    scienceModule.display(assets);
-  }
-}
-
-function ifSpacebus() {
-  if (station.modules.spacebus === true) {
-    spaceBus = new SpaceBus();
-    spaceBus.display(assets);
-  }
-}
-
 function ifClick(resultKey) {
   if (resultKey === "shop") {
     shopScreen = true;
@@ -227,6 +191,7 @@ function ifClick(resultKey) {
 }
 
 gameBackground.animation();
+spaceBus.animation();
 
 function gameScreen() {
   if (state === "gameScreen") {
@@ -234,24 +199,33 @@ function gameScreen() {
     gameBackground.freighter(assets);
     station.parallax();
     station.moduleInteraction(assets);
-    ifShipyardInteraction();
+    shipyard.interactionArea(assets);
     shop.interactionArea(assets, shopScreen);
 
     clickedColor = get(mouseX, mouseY);
 
-    ifScience();
+    spaceBus.display(assets);
+    scienceModule.display(assets);
+    parameterEngine.efficiencyFactor = scienceModule.efficiencyFactor;
     station.display(assets);
-    ifShipyard();
-    ifModule1();
-    ifSpacebus();
+    shipyard.display(assets);
+    module1.perk();
+    parameterEngine.solarPanelMaintenence += module1.solarPanelMaintenence;
+    parameterEngine.electrolyseMaintenance += module1.electrolyseMaintenance;
+    parameterEngine.water += module1.water;
+    module1.display(assets);
     parameterEngine.parameterNet(state);
     parameterEngine.timeDelay();
     parameterEngine.gameScore();
     parameterEngine.display();
     shop.shop(assets, shopScreen);
-    parameterEngine.testDisplay();
     if (parameterEngine.lose() === true) {
       state = "scoreScreen";
+      shop.reset();
+      shipyard.reset();
+      module1.reset();
+      scienceModule.reset();
+      spaceBus.reset();
     }
   }
 }
@@ -259,6 +233,7 @@ function gameScreen() {
 function scoreScreen() {
   if (state === "scoreScreen") {
     gameBackground.displayBackground();
+    gameBackground.freighter(assets);
     restart.interactionArea();
     clickedColor = get(mouseX, mouseY);
     restart.display();
@@ -292,19 +267,16 @@ function mouseClicked() {
 
   ifClick(resultKey);
 
-  // if (station.modules.shipyard === true && resultKey == "spaceBus") {
-  //   station.modules.spacebus = true;
-  // }
-  // if (station.modules.shipyard === true) {
-  //   shipyard.busControl(resultKey);
-  //   shipyard.modules = station.modules;
-  // }
-
+  shipyard.spaceBsusControl(resultKey);
+  spaceBus.active = shipyard.enableSpaceBus;
   shop.interactionShop(resultKey, parameterEngine.currency);
-  station.modules = shop.modules;
+  module1.active = shop.modules.module1;
+  shipyard.active = shop.modules.shipyard;
+  scienceModule.active = shop.modules.science;
+
   parameterEngine.currencyCheck(shop.currency);
   parameterEngine.interactionNet(resultKey, shopScreen);
 
-  console.log(station.modules);
+  console.log(scienceModule.active);
   console.log(resultKey);
 }
