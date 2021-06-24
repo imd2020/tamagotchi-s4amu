@@ -48,6 +48,8 @@ export default class Button {
   }
   display() {
     push();
+    push();
+    stroke(255, 255, 255);
     rectMode(CENTER);
     fill(
       this.displayedColor[0],
@@ -62,6 +64,7 @@ export default class Button {
       this.shape.y,
       this.shape.roundness
     );
+    pop();
     fill(255, 255, 255);
     textAlign(CENTER);
     textSize(20);

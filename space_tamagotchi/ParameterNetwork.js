@@ -1,8 +1,11 @@
 export default class ParameterEngine {
   constructor() {
     this.solarPanelMaintenence = random(40, 60);
+    this.solarPanelMaintenenceSinkFactor = random(0.4, 0.7);
     this.electrolyseMaintenance = random(40, 60);
+    this.electrolyseMaintenanceSinkFactor = random(0.4, 0.7);
     this.water = random(40, 60);
+    this.waterSinkFactor = random(0.4, 0.7);
 
     this.subScore = 0;
     this.score = 0;
@@ -64,17 +67,24 @@ export default class ParameterEngine {
 
   parameterNet() {
     this.electrolyseMaintenance -=
-      random(0.3, 0.5) / this.inSeconds / this.efficiencyFactor;
+      this.solarPanelMaintenenceSinkFactor /
+      this.inSeconds /
+      this.efficiencyFactor;
 
     this.solarPanelMaintenence -=
-      random(0.3, 0.5) / this.inSeconds / this.efficiencyFactor;
+      this.solarPanelMaintenenceSinkFactor /
+      this.inSeconds /
+      this.efficiencyFactor;
 
-    this.water -= random(0.3, 0.5) / this.inSeconds / this.efficiencyFactor;
-
-    if (this.solarPanelMaintenence <= random(30, 40)) {
+    this.water -= this.waterSinkFactor / this.inSeconds / this.efficiencyFactor;
+    if (this.solarPanelMaintenence <= random(60, 70)) {
+      this.electrolyseMaintenance -= 0.3 / this.inSeconds;
+    } else if (this.solarPanelMaintenence <= random(30, 40)) {
       this.electrolyseMaintenance -= 1 / this.inSeconds;
     }
-    if (this.water <= random(30, 40)) {
+    if (this.water <= random(60, 70)) {
+      this.electrolyseMaintenance -= 0.3 / this.inSeconds;
+    } else if (this.water <= random(30, 40)) {
       this.electrolyseMaintenance -= 1 / this.inSeconds;
     }
 
@@ -104,9 +114,14 @@ export default class ParameterEngine {
   gameScore() {
     this.subScore =
       this.electrolyseMaintenance + this.solarPanelMaintenence + this.water;
+
     this.score += this.subScore / this.scoreSpeedFatcor;
+
     this.currency += this.subScore / this.currencySpeedFactor;
     if (this.score <= -25) {
+    }
+    if (this.currency >= 1500) {
+      this.currency = 1500;
     }
   }
 
@@ -138,12 +153,16 @@ export default class ParameterEngine {
 
   restart() {
     this.solarPanelMaintenence = random(40, 60);
+    this.solarPanelMaintenenceSinkFactor = random(0.4, 0.7);
     this.electrolyseMaintenance = random(40, 60);
+    this.electrolyseMaintenanceSinkFactor = random(0.4, 0.7);
     this.water = random(40, 60);
+    this.waterSinkFactor = random(0.4, 0.7);
 
     this.subScore = 0;
     this.score = 0;
     this.currency = 0;
+
     this.orderWater = false;
     this.orderWaterCounter = 0;
 
@@ -154,6 +173,10 @@ export default class ParameterEngine {
     this.workCounterSolarPanels = 0;
 
     this.working = false;
+
+    this.reverseCounter = 0;
+
+    this.efficiencyFactor = 1;
   }
 
   display() {

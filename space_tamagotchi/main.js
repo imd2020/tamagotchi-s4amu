@@ -6,6 +6,8 @@ import { ScienceModule } from "./scienceModuels.js";
 import { Shipyard } from "./shipyard.js";
 import { Module1 } from "./module1.js";
 import { SpaceBus } from "./spacebus.js";
+import { Shop } from "./shop.js";
+import { compareArray } from "./functions.js";
 
 window.preload = preload;
 window.draw = draw;
@@ -25,6 +27,7 @@ let assets = {
     shopscreen: "",
     howtoScreen: "",
     freighter: "",
+    planet: "",
   },
   interactionArea: {
     shop: "",
@@ -91,6 +94,7 @@ let module1;
 let shipyard;
 let scienceModule;
 let spaceBus;
+let shop = new Shop();
 
 colorDict.set("shop", [100, 200, 30, 255]);
 colorDict.set("solarPanels", [110, 200, 190, 255]);
@@ -114,6 +118,7 @@ function preload() {
   assets.visuals.spaceBus = loadImage("assets/spaceBus.png");
   assets.visuals.shopscreen = loadImage("assets/shopscreen.png");
   assets.visuals.freighter = loadImage("assets/freighter.png");
+  assets.visuals.planet = loadImage("assets/planet.png");
 
   assets.interactionArea.shop = loadImage("assets/interactionShop.png"); //(100,200,30)
   assets.interactionArea.solarPanels = loadImage(
@@ -149,90 +154,49 @@ function startScreen() {
 function howtoScreen() {
   if (state === "howtoScreen") {
     gameBackground.displayBackground();
+    gameBackground.freighter(assets);
     imageMode(CENTER);
     image(assets.visuals.howtoScreen, width / 2, height / 2, 700, 500);
   }
-  if (backClick === true) {
-    state = "startScreen";
-    backClick = false;
+}
+
+function ifModule1() {
+  if (station.modules.moduleExtension === true) {
+    module1 = new Module1();
+    module1.perk();
+    module1.display(assets);
   }
 }
 
-function gameScreen() {
-  if (state === "gameScreen") {
-    gameBackground.displayBackground();
-    gameBackground.freighter(assets);
-    station.parallax();
-    station.moduleInteraction(assets, shopScreen);
-    if (station.modules.shipyard === true) {
-      shipyard = new Shipyard();
-      shipyard.interactionArea(assets);
-    }
-    clickedColor = get(mouseX, mouseY);
-    if (station.modules.science === true) {
-      scienceModule = new ScienceModule();
-      parameterEngine.efficiencyFactor = scienceModule.efficiencyFactor;
-      scienceModule.display(assets);
-    }
-    station.mainModule(assets);
-    if (station.modules.shipyard === true) {
-      shipyard.display(assets);
-    }
-    if (station.modules.moduleExtension === true) {
-      module1 = new Module1();
-      module1.display(assets);
-    }
-    if (station.modules.spacebus === true) {
-      spaceBus = new SpaceBus();
-      spaceBus.display(assets);
-    }
-    parameterEngine.parameterNet(state);
-    parameterEngine.timeDelay();
-    parameterEngine.gameScore();
-    parameterEngine.display();
-    station.shop(assets, shopScreen);
-
-    parameterEngine.testDisplay();
-
-    if (parameterEngine.lose() === true) {
-      state = "scoreScreen";
-    }
+function ifShipyardInteraction() {
+  if (station.modules.shipyard === true) {
+    shipyard = new Shipyard();
+    shipyard.interactionArea(assets);
   }
 }
 
-function scoreScreen() {
-  if (state === "scoreScreen") {
-    gameBackground.displayBackground();
-    restart.interactionArea();
-    clickedColor = get(mouseX, mouseY);
-    restart.display();
+function ifShipyard() {
+  if (station.modules.shipyard === true) {
+    shipyard.display(assets);
   }
 }
 
-function compareArray(arrayA, arrayB) {
-  for (let i = 0; i <= arrayA.length; i++) {
-    if (arrayA[i] !== arrayB[i]) {
-      return false;
-    }
+function ifScience() {
+  if (station.modules.science === true) {
+    scienceModule = new ScienceModule();
+    parameterEngine.efficiencyFactor = scienceModule.efficiencyFactor;
+    scienceModule.display(assets);
   }
-  return true;
 }
 
-function draw() {
-  startScreen();
-  howtoScreen();
-  gameScreen();
-  scoreScreen();
+function ifSpacebus() {
+  if (station.modules.spacebus === true) {
+    spaceBus = new SpaceBus();
+    spaceBus.display(assets);
+  }
 }
 
-function mouseClicked() {
-  let resultKey;
-  colorDict.forEach((value, key) => {
-    if (compareArray(clickedColor, value) === true) {
-      resultKey = key;
-    }
-  });
-
+function ifClick(resultKey) {
   if (resultKey === "shop") {
     shopScreen = true;
   }
@@ -256,18 +220,91 @@ function mouseClicked() {
     state = "startScreen";
   }
 
-  if (station.modules.shipyard === true) {
-    console.log("iasgdiausgdh");
-    shipyard.busControl(resultKey);
+  if (backClick === true && state === "howtoScreen") {
+    state = "startScreen";
+    backClick = false;
   }
+}
 
-  station.interactionShop(resultKey, parameterEngine.currency);
-  parameterEngine.currencyCheck(station.currency);
+gameBackground.animation();
+
+function gameScreen() {
+  if (state === "gameScreen") {
+    gameBackground.displayBackground();
+    gameBackground.freighter(assets);
+    station.parallax();
+    station.moduleInteraction(assets);
+    ifShipyardInteraction();
+    shop.interactionArea(assets, shopScreen);
+
+    clickedColor = get(mouseX, mouseY);
+
+    ifScience();
+    station.display(assets);
+    ifShipyard();
+    ifModule1();
+    ifSpacebus();
+    parameterEngine.parameterNet(state);
+    parameterEngine.timeDelay();
+    parameterEngine.gameScore();
+    parameterEngine.display();
+    shop.shop(assets, shopScreen);
+    parameterEngine.testDisplay();
+    if (parameterEngine.lose() === true) {
+      state = "scoreScreen";
+    }
+  }
+}
+
+function scoreScreen() {
+  if (state === "scoreScreen") {
+    gameBackground.displayBackground();
+    restart.interactionArea();
+    clickedColor = get(mouseX, mouseY);
+    restart.display();
+    push();
+    textAlign(CENTER);
+    textSize(20);
+    fill(255, 255, 255);
+    text(
+      "Your Score is: " + round(parameterEngine.score),
+      width / 2,
+      height / 2 - 100
+    );
+    pop();
+  }
+}
+
+function draw() {
+  startScreen();
+  howtoScreen();
+  gameScreen();
+  scoreScreen();
+}
+
+function mouseClicked() {
+  let resultKey;
+  colorDict.forEach((value, key) => {
+    if (compareArray(clickedColor, value) === true) {
+      resultKey = key;
+    }
+  });
+
+  ifClick(resultKey);
+
+  // if (station.modules.shipyard === true && resultKey == "spaceBus") {
+  //   station.modules.spacebus = true;
+  // }
+  // if (station.modules.shipyard === true) {
+  //   shipyard.busControl(resultKey);
+  //   shipyard.modules = station.modules;
+  // }
+
+  shop.interactionShop(resultKey, parameterEngine.currency);
+  station.modules = shop.modules;
+  parameterEngine.currencyCheck(shop.currency);
   parameterEngine.interactionNet(resultKey, shopScreen);
 
-  console.log(state);
-  console.log(parameterEngine.efficiencyFactor + "efficiencyFactor ");
-  console.log(station.modules.shipyard + " shipyard");
-  console.log(station.modules.spacebus + " spacebus");
+  console.log(station.modules);
   console.log(resultKey);
 }

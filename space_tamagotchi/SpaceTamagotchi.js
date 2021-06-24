@@ -10,7 +10,6 @@ export default class Station {
       shipyard: false,
       spacebus: false,
       moduleExtension: false,
-      shopScreen: false,
     };
     this.currency = 0;
     this.offset = {
@@ -19,41 +18,7 @@ export default class Station {
     };
   }
 
-  interactionShop(resultKey, currency) {
-    this.currency = currency;
-    if (
-      resultKey === "scienceModules" &&
-      this.currency >= 1 &&
-      this.modules.science === false
-    ) {
-      this.modules.science = true;
-      this.currency -= 1;
-    }
-    if (
-      resultKey === "module1" &&
-      this.currency >= 1 &&
-      this.modules.moduleExtension === false
-    ) {
-      this.modules.moduleExtension = true;
-      this.currency -= 1;
-    }
-    if (
-      resultKey === "shipyard" &&
-      this.currency >= 1 &&
-      this.modules.shipyard === false
-    ) {
-      this.modules.shipyard = true;
-      this.currency -= 1;
-    }
-  }
-
-  shop(assets, shopScreen) {
-    if (shopScreen === true) {
-      image(assets.visuals.shopscreen, width / 2, height / 2, 1000, 700);
-    }
-  }
-
-  moduleInteraction(stationAssets, shopScreen) {
+  moduleInteraction(stationAssets) {
     image(
       stationAssets.interactionArea.orderWater,
       this.pos.x,
@@ -82,25 +47,9 @@ export default class Station {
       this.format,
       this.format
     );
-    if (shopScreen === true) {
-      image(
-        stationAssets.interactionArea.shopscreenClose,
-        width / 2,
-        height / 2,
-        1000,
-        700
-      );
-      image(
-        stationAssets.interactionArea.shopscreen,
-        width / 2,
-        height / 2,
-        1000,
-        700
-      );
-    }
   }
 
-  mainModule(assets) {
+  display(assets) {
     imageMode(CENTER);
     image(
       assets.visuals.mainModule,
