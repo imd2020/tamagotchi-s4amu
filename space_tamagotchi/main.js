@@ -26,6 +26,7 @@ let assets = {
     howtoScreen: "",
     freighter: "",
     planet: "",
+    title: "",
   },
   interactionArea: {
     shop: "",
@@ -119,6 +120,7 @@ function preload() {
   assets.visuals.shopscreen = loadImage("assets/shopscreen.png");
   assets.visuals.freighter = loadImage("assets/freighter.png");
   assets.visuals.planet = loadImage("assets/planet.png");
+  assets.visuals.title = loadImage("assets/title.png");
 
   assets.interactionArea.shop = loadImage("assets/interactionShop.png"); //(100,200,30)
   assets.interactionArea.solarPanels = loadImage(
@@ -143,6 +145,7 @@ function startScreen() {
   if (state === "startScreen") {
     gameBackground.displayBackground();
     gameBackground.freighter(assets);
+    gameBackground.title(assets);
     startButton.interactionArea();
     howtoButton.interactionArea();
     clickedColor = get(mouseX, mouseY);
@@ -191,6 +194,7 @@ function ifClick(resultKey) {
 }
 
 gameBackground.animation();
+gameBackground.titleAnimation();
 spaceBus.animation();
 
 function gameScreen() {

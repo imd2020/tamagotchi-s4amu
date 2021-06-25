@@ -20,7 +20,7 @@ export class ScienceModule extends Station {
 
   display(assets) {
     if (this.active === true) {
-      this.efficiencyFactor = 2;
+      this.efficiencyFactor = 1.5;
       this.parallax();
       image(
         assets.visuals.scienceModules,

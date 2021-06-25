@@ -13,6 +13,10 @@ export default class Background {
       x: random(200, width - 200),
       y: random(200, height - 200),
     };
+    this.titlePos = {
+      x: width / 2 + 40,
+      y: -200,
+    };
   }
 
   animation() {
@@ -44,6 +48,21 @@ export default class Background {
       130 * this.sizeFactor,
       100 * this.sizeFactor
     );
+    pop();
+  }
+
+  titleAnimation() {
+    gsap.to(this.titlePos, {
+      y: height / 2 - 200,
+      duration: 5,
+      ease: "elastic",
+    });
+  }
+
+  title(assets) {
+    push();
+    imageMode(CENTER);
+    image(assets.visuals.title, this.titlePos.x, this.titlePos.y, 1000, 700);
     pop();
   }
 
